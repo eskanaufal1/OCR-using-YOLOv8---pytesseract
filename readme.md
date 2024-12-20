@@ -142,27 +142,6 @@ venv\Scripts\activate     # Windows
 pip install -r requirements-dev.txt
 ```
 
-### **Testing**
-
-```bash
-pytest tests/
-```
-
-### **Linting**
-
-```bash
-flake8 src/
-black src/
-```
-
-## **Kontribusi**
-
-1. Fork repositori
-2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
-3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buat Pull Request
-
 ## **Lisensi**
 
 Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanjut.
