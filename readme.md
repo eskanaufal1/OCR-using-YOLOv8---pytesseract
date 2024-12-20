@@ -1,138 +1,184 @@
-OCR Teks Pengenalan Plat Nomor Kendaraan dengan Pra-Pemrosesan Gambar
-Aplikasi ini menggunakan Tesseract OCR untuk mengekstraksi teks dari gambar, khususnya untuk mengenali plat nomor kendaraan. Beberapa teknik pra-pemrosesan gambar seperti konversi ke grayscale, thresholding, deteksi tepi, pembukaan, dan koreksi kemiringan diterapkan untuk meningkatkan kualitas gambar sebelum ekstraksi teks.
+# **Sistem Pengenalan Plat Nomor Kendaraan dengan OCR dan Pemrosesan Citra**
 
-Deskripsi
-Proyek ini bertujuan untuk membangun sistem deteksi plat nomor kendaraan menggunakan Optical Character Recognition (OCR) dengan Tesseract OCR dan beberapa teknik pemrosesan citra dari OpenCV. Sistem ini mampu memproses gambar, menghilangkan noise, memperbaiki kemiringan gambar, dan mengekstrak teks dari plat nomor kendaraan.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Fitur utama:
+Sistem pengenalan plat nomor kendaraan berbasis Python yang menggunakan Tesseract OCR dan OpenCV untuk pemrosesan citra tingkat lanjut. Sistem ini menggabungkan berbagai teknik pre-processing untuk meningkatkan akurasi pengenalan karakter.
 
-Pra-pemrosesan gambar: Menggunakan berbagai teknik seperti konversi grayscale, thresholding, deteksi tepi, pembukaan, dan koreksi kemiringan.
-Ekstraksi teks: Menggunakan Pytesseract, wrapper Python untuk Tesseract OCR, untuk membaca teks dari gambar.
-Visualisasi: Menampilkan bounding box di sekitar karakter yang terdeteksi untuk memverifikasi hasil OCR.
-Fitur
-Mengubah gambar berwarna menjadi gambar grayscale untuk meningkatkan kualitas pemrosesan.
-Menggunakan teknik thresholding dan operasi morfologi (opening, dilation, erosion) untuk membersihkan gambar dari noise.
-Deteksi tepi dengan metode Canny Edge Detection untuk menonjolkan kontur.
-Koreksi kemiringan untuk menyesuaikan gambar yang miring atau tidak rata.
-Ekstraksi teks dengan Pytesseract dan menampilkan hasilnya dalam bentuk teks.
-Menampilkan bounding box pada karakter yang terdeteksi untuk memverifikasi hasil OCR.
-Prasyarat
-Sebelum menggunakan aplikasi ini, Anda perlu menginstal beberapa pustaka berikut:
+## **Gambaran Umum**
 
-Tesseract OCR: Untuk pengenalan teks pada gambar.
-OpenCV: Untuk pemrosesan gambar.
-NumPy: Untuk manipulasi array dan matriks.
-Pytesseract: Wrapper Python untuk Tesseract OCR.
-Langkah-langkah Instalasi
-Instalasi Tesseract OCR
+Sistem ini dirancang untuk:
 
-Unduh dan instal Tesseract OCR dari tautan resmi Tesseract.
+- Mendeteksi dan membaca plat nomor kendaraan dari gambar
+- Menerapkan teknik pemrosesan citra untuk meningkatkan kualitas gambar
+- Mengekstrak dan memvisualisasikan teks yang terdeteksi
 
-Setelah menginstal Tesseract, pastikan untuk menambahkan path instalasi ke sistem Anda. Pada Windows, path default-nya adalah:
-makefile
-Copy code
-C:\Program Files\Tesseract-OCR\tesseract.exe
-Instalasi Pustaka Python
+### **Fitur Utama**
 
-Untuk menginstal pustaka yang diperlukan, jalankan perintah berikut:
+- Pre-processing gambar otomatis dengan multiple pipeline
+- Deteksi dan koreksi kemiringan gambar
+- Penghilangan noise dan peningkatan kontras
+- Visualisasi hasil dengan bounding box
+- Ekstraksi teks menggunakan engine Tesseract OCR
 
-bash
-Copy code
-pip install pytesseract opencv-python numpy
-Penggunaan
-1. Menyiapkan Gambar
-Gambar yang akan diproses harus berada dalam format .jpg atau .png. Gambar tersebut bisa berupa gambar plat nomor kendaraan atau gambar dengan teks yang ingin diekstraksi.
+## **Instalasi**
 
-2. Kode Utama
-Berikut adalah cara menggunakan aplikasi ini untuk mengekstraksi teks dari gambar.
+### **Prasyarat**
 
-python
-Copy code
-import cv2
-import pytesseract
-from pytesseract import Output
-import numpy as np
+- Python 3.7+
+- Tesseract OCR
+- OpenCV
+- NumPy
+- pytesseract
 
-# Menentukan lokasi pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+### **Langkah-langkah**
 
-# Fungsi pra-pemrosesan gambar
-def get_grayscale(image):
-    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+1. **Instalasi Tesseract OCR**
 
-def remove_noise(image):
-    return cv2.medianBlur(image, 5)
+   ```bash
+   # Windows (menggunakan chocolatey)
+   choco install tesseract
 
-def thresholding(image):
-    return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+   # Linux
+   sudo apt install tesseract-ocr
+   ```
 
-def dilate(image):
-    kernel = np.ones((5, 5), np.uint8)
-    return cv2.dilate(image, kernel, iterations=1)
-    
-def erode(image):
-    kernel = np.ones((5, 5), np.uint8)
-    return cv2.erode(image, kernel, iterations=1)
+2. **Instalasi Dependencies Python**
 
-def opening(image):
-    kernel = np.ones((5, 5), np.uint8)
-    return cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-def canny(image):
-    return cv2.Canny(image, 100, 200)
+3. **Konfigurasi Path Tesseract**
+   ```python
+   # Di kode Anda
+   pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Untuk Windows
+   ```
 
-def deskew(image):
-    coords = np.column_stack(np.where(image > 0))
-    angle = cv2.minAreaRect(coords)[-1]
-    if angle < -45:
-        angle = -(90 + angle)
-    else:
-        angle = -angle
-    (h, w) = image.shape[:2]
-    center = (w // 2, h // 2)
-    M = cv2.getRotationMatrix2D(center, angle, 1.0)
-    rotated = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
-    return rotated
+## **Penggunaan**
 
-# Membaca gambar
-image_ = cv2.imread('cropped_image.jpg')
+### **Contoh Dasar**
 
-# Pra-pemrosesan gambar
-gray = get_grayscale(image_)
-thresh = thresholding(gray)
-opening = opening(gray)
-canny = canny(gray)
-deskewed = deskew(canny)
+```python
+from plate_recognition import PlateRecognizer
 
-# Memilih gambar yang akan diproses
-chosen_image = opening
+# Inisialisasi recognizer
+recognizer = PlateRecognizer()
 
-# Ekstraksi teks menggunakan pytesseract
-extracted_text = pytesseract.image_to_string(chosen_image)
-print("Teks yang diekstrak:")
-print(extracted_text)
+# Baca dan proses gambar
+plate_text = recognizer.read_plate('path/to/image.jpg')
+print(f"Nomor Plat: {plate_text}")
+```
 
-# Menampilkan bounding box pada karakter
-h, w, c = image_.shape
-boxes = pytesseract.image_to_boxes(chosen_image)
-for b in boxes.splitlines():
-    b = b.split(' ')
-    image_ = cv2.rectangle(image_, (int(b[1]), h - int(b[2])), (int(b[3]), h - int(b[4])), (0, 255, 0), 2)
+### **Penggunaan Lanjutan**
 
-# Menampilkan gambar dengan bounding box
-cv2.imshow('img', image_)
-cv2.waitKey(0)
-3. Penjelasan Alur Kerja
-Gambar dibaca menggunakan cv2.imread().
-Beberapa metode pra-pemrosesan diterapkan untuk mempersiapkan gambar agar lebih mudah diproses oleh Tesseract.
-Ekstraksi teks dilakukan dengan menggunakan pytesseract.image_to_string().
-Bounding box digambar di sekitar karakter yang terdeteksi menggunakan pytesseract.image_to_boxes().
-Gambar yang diubah kemudian ditampilkan dengan OpenCV menggunakan cv2.imshow().
-Kontribusi
-Jika Anda ingin berkontribusi pada proyek ini, Anda dapat melakukan hal berikut:
+```python
+# Dengan konfigurasi custom
+recognizer = PlateRecognizer(
+    preprocess_pipeline=['grayscale', 'threshold', 'denoise'],
+    enable_deskew=True,
+    confidence_threshold=80
+)
 
-Fork repositori ini.
-Buat branch baru untuk perbaikan atau penambahan fitur.
-Kirimkan pull request dengan penjelasan mengenai perubahan yang telah dilakukan.
+# Proses dengan visualisasi
+result = recognizer.process_image(
+    'path/to/image.jpg',
+    visualize=True,
+    save_debug_images=True
+)
+```
 
-source=https://github.com/Muhammad-Zeerak-Khan/Automatic-License-Plate-Recognition-using-YOLOv8.git
+## **Dokumentasi API**
+
+### **Kelas PlateRecognizer**
+
+#### **Metode**
+
+- `read_plate(image_path: str) -> str`
+
+  - Membaca dan mengembalikan teks plat nomor
+  - Returns: String teks yang terdeteksi
+
+- `process_image(image_path: str, **kwargs) -> dict`
+  - Memproses gambar dengan opsi lanjutan
+  - Returns: Dictionary hasil pemrosesan
+
+#### **Parameter Konfigurasi**
+
+- `preprocess_pipeline`: List teknik preprocessing yang akan digunakan
+- `enable_deskew`: Boolean untuk mengaktifkan koreksi kemiringan
+- `confidence_threshold`: Nilai minimum confidence untuk hasil OCR
+
+## **Pipeline Pemrosesan**
+
+1. **Pre-processing**
+
+   - Konversi ke grayscale
+   - Penghilangan noise
+   - Thresholding adaptif
+   - Operasi morfologi
+
+2. **Deteksi & Koreksi**
+
+   - Deteksi kemiringan
+   - Koreksi perspektif
+   - Normalisasi ukuran
+
+3. **OCR & Post-processing**
+   - Ekstraksi teks dengan Tesseract
+   - Validasi format plat
+   - Koreksi karakter
+
+## **Pengembangan**
+
+### **Setup Environment**
+
+```bash
+# Buat virtual environment
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+
+# Install dependencies
+pip install -r requirements-dev.txt
+```
+
+### **Testing**
+
+```bash
+pytest tests/
+```
+
+### **Linting**
+
+```bash
+flake8 src/
+black src/
+```
+
+## **Kontribusi**
+
+1. Fork repositori
+2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
+3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buat Pull Request
+
+## **Lisensi**
+
+Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanjut.
+
+## **Kontak**
+
+Nama Anda - [@twitter_handle](https://twitter.com/twitter_handle)
+
+Project Link: [https://github.com/username/repo](https://github.com/username/repo)
+
+## **Acknowledgments**
+
+- [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
+- [OpenCV](https://opencv.org/)
+- [Python Packaging Guide](https://packaging.python.org/)
+
+## **Credits**
+
+- [source]=https://github.com/Muhammad-Zeerak-Khan/Automatic-License-Plate-Recognition-using-YOLOv8.git
