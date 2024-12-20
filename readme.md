@@ -89,7 +89,7 @@ result = recognizer.process_image(
 
 ## **Dokumentasi API**
 
-### **Kelas PlateRecognizer**
+### **Class PlateRecognizer**
 
 #### **Metode**
 
@@ -148,9 +148,7 @@ Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanj
 
 ## **Kontak**
 
-Nama Anda - [@twitter_handle](https://twitter.com/twitter_handle)
-
-Project Link: [https://github.com/username/repo](https://github.com/username/repo)
+Project Link: [https://github.com/username/repo](https://github.com/eskanaufal1/OCR-using-YOLOv8-pytesseract.git)
 
 ## **Acknowledgments**
 
